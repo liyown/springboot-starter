@@ -16,6 +16,7 @@ import com.lyw.springbootstarter.model.vo.UserVO;
 import com.lyw.springbootstarter.service.UserService;
 import com.lyw.springbootstarter.utils.SqlUtils;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.bean.WxOAuth2UserInfo;
 import org.apache.commons.lang3.StringUtils;
@@ -107,7 +108,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户不存在或密码错误");
         }
         // 3. 记录用户的登录态
-        request.getSession().setAttribute(USER_LOGIN_STATE, user);
+//        request.getSession().setAttribute(USER_LOGIN_STATE, user);
+        HttpSession session = request.getSession();
+        session.setMaxInactiveInterval(60 * 60 * 24 * 7);
+        session.setAttribute(USER_LOGIN_STATE, user);
         return this.getLoginUserVO(user);
     }
 
@@ -230,7 +234,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public UserVO getUserVO(User user) {
+    public UserVO toVO(User user) {
         if (user == null) {
             return null;
         }
@@ -240,11 +244,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public List<UserVO> getUserVO(List<User> userList) {
+    public List<UserVO> toVO(List<User> userList) {
         if (CollUtil.isEmpty(userList)) {
             return new ArrayList<>();
         }
-        return userList.stream().map(this::getUserVO).collect(Collectors.toList());
+        return userList.stream().map(this::toVO).collect(Collectors.toList());
     }
 
     @Override

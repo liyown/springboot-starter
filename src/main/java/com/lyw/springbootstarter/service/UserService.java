@@ -97,7 +97,7 @@ public interface UserService extends IService<User> {
      * @param user
      * @return
      */
-    UserVO getUserVO(User user);
+    UserVO toVO(User user);
 
     /**
      * 获取脱敏的用户信息
@@ -105,7 +105,7 @@ public interface UserService extends IService<User> {
      * @param userList
      * @return
      */
-    List<UserVO> getUserVO(List<User> userList);
+    List<UserVO> toVO(List<User> userList);
 
     /**
      * 获取查询条件

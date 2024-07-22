@@ -1,8 +1,10 @@
 package com.lyw.springbootstarter.model.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -22,23 +24,17 @@ public class Question implements Serializable {
 
     private String answer;
 
-    private String judgecase;
-
-    private String judgeconfig;
-
-    private Integer submitnum;
-
-    private Integer thumbnum;
-
-    private Integer favournum;
+    @Serial
+    @TableField(exist = false)
+    private static final long serialVersionUID = 1L;
+    private String judgeCase;
+    private String judgeConfig;
+    private Integer submitNum;
+    private Integer thumbNum;
 
     private Long userid;
-
-    private Date createtime;
-
-    private Date updatetime;
-
-    private Integer isdelete;
-
-    private static final long serialVersionUID = 1L;
+    private Integer favourNum;
+    private Date createTime;
+    private Date updateTime;
+    private Integer isDelete;
 }

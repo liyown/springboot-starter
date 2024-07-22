@@ -3,10 +3,7 @@ package com.lyw.springbootstarter.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lyw.springbootstarter.annotation.AuthCheck;
-import com.lyw.springbootstarter.common.BaseResponse;
-import com.lyw.springbootstarter.common.DeleteRequest;
-import com.lyw.springbootstarter.common.ErrorCode;
-import com.lyw.springbootstarter.common.ResultUtils;
+import com.lyw.springbootstarter.common.*;
 import com.lyw.springbootstarter.config.WxOpenConfig;
 import com.lyw.springbootstarter.constant.UserConstant;
 import com.lyw.springbootstarter.exception.BusinessException;
@@ -90,6 +87,7 @@ public class UserController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         LoginUserVO loginUserVO = userService.userLogin(userAccount, userPassword, request);
+
         return ResultUtils.success(loginUserVO);
     }
 
@@ -238,7 +236,7 @@ public class UserController {
     public BaseResponse<UserVO> getUserVOById(long id, HttpServletRequest request) {
         BaseResponse<User> response = getUserById(id, request);
         User user = response.getData();
-        return ResultUtils.success(userService.getUserVO(user));
+        return ResultUtils.success(userService.toVO(user));
     }
 
     /**
@@ -279,7 +277,7 @@ public class UserController {
         Page<User> userPage = userService.page(new Page<>(current, size),
                 userService.getQueryWrapper(userQueryRequest));
         Page<UserVO> userVOPage = new Page<>(current, size, userPage.getTotal());
-        List<UserVO> userVO = userService.getUserVO(userPage.getRecords());
+        List<UserVO> userVO = userService.toVO(userPage.getRecords());
         userVOPage.setRecords(userVO);
         return ResultUtils.success(userVOPage);
     }
