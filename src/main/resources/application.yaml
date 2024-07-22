@@ -1,0 +1,111 @@
+server:
+  servlet:
+    context-path: /api
+    # cookie 30 天过期
+    session:
+      cookie:
+        max-age: 2592000
+  port: 8080
+
+spring:
+  application:
+    name: demo
+  profiles:
+    active: dev
+  datasource:
+    url: jdbc:mysql://${my.db.host}:3300/my_db?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
+    username: ${my.db.username}
+    password: ${my.db.password}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  # Redis 配置
+  # todo 需替换配置，然后取消注释
+  #  redis:
+  #    database: 1
+  #    host: localhost
+  #    port: 6379
+  #    timeout: 5000
+  #    password: 123456
+  #    lettuce:
+    #      pool:
+    #        max-active: 8
+    #        max-idle: 8
+    #        max-wait: 1000
+
+  # Elasticsearch 配置
+  #  elasticsearch:
+  #    uris: http://localhost:9200
+  #    username: root
+  #    password: 123456
+
+  #  rabbitmq:
+  #    host: 192.168.208.128
+  #    port: 5672
+  #    username: user
+  #    password: password
+  #    virtual-host: /hmall
+  #    publisher-confirm-type: correlated
+  #    publisher-returns: true
+  #    发布者配置
+  #    template:
+  #      retry:
+  #        enabled: true
+  #        max-attempts: 3
+  #        initial-interval: 1000
+  #        max-interval: 10000
+  #        multiplier: 2
+    #  监听器配置
+    #  listener:
+    #    simple:
+    #      acknowledge-mode: auto
+    #      retry:
+    #        enabled: true
+    #        max-attempts: 3
+    #        initial-interval: 1000
+    #        max-interval: 10000
+    #        multiplier: 2
+    #        stateless: true
+
+  # 文件上传
+  servlet:
+    multipart:
+      # 大小限制
+      max-file-size: 10MB
+
+mybatis-plus:
+  type-aliases-package:
+    - com.example.demo.entity
+  mapper-locations:
+    - classpath:mapper/*.xml
+  global-config:
+    db-config:
+      id-type: auto
+      logic-delete-field: isDelete # 全局逻辑删除的实体字段名
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+      update-strategy: not_null
+  configuration:
+    default-enum-type-handler: com.baomidou.mybatisplus.core.handlers.MybatisEnumTypeHandler
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: false
+
+logging:
+  level:
+    com.example.demo: debug
+  pattern:
+    dateformat: HH:mm:ss:SSS
+  file:
+    path: "logs/${spring.application.name}"
+
+
+knife4j:
+  enable: true
+  openapi:
+    title: 项目初始化接口文档
+    description: "项目初始化接口文档"
+    version: v1.0.0
+    group:
+      default:
+        group-name: default
+        api-rule: package
+        api-rule-resources:
+          - com.lyw.springbootstarter.controller
