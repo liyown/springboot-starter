@@ -11,7 +11,6 @@ import com.lyw.springbootstarter.exception.BusinessException;
 import com.lyw.springbootstarter.mapper.QuestionMapper;
 import com.lyw.springbootstarter.model.dto.question.JudgeConfig;
 import com.lyw.springbootstarter.model.dto.question.QuestionGetRequestPage;
-import com.lyw.springbootstarter.model.dto.questionsubmit.QuestionSubmitGetRequestPage;
 import com.lyw.springbootstarter.model.entity.Question;
 import com.lyw.springbootstarter.model.entity.User;
 import com.lyw.springbootstarter.model.vo.UserVO;
@@ -25,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.locks.AbstractQueuedSynchronizer;
 import java.util.stream.Collectors;
 
 /**
@@ -49,12 +49,15 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
         Long id = questionGetRequest.getId();
         String title = questionGetRequest.getTitle();
         String content = questionGetRequest.getContent();
+        List<String> tags = questionGetRequest.getTags();
+        String tagSql = tags == null ? null : tags.stream().map(tag -> "tags Like '%" + tag + "%'").collect(Collectors.joining(" AND "));
         String sortField = questionGetRequest.getSortField();
         String sortOrder = questionGetRequest.getSortOrder();
         QueryWrapper<Question> queryWrapper = new QueryWrapper<>();
         queryWrapper.like(StringUtils.isNotBlank(title), "title", title)
                     .like(StringUtils.isNotBlank(content), "content", content)
                     .eq(id != null, "id", id)
+                    .and(SqlUtils.validSortField(tagSql), i -> i.apply(tagSql))
                     .orderBy(SqlUtils.validSortField(sortField), sortOrder.equals(CommonConstant.SORT_ORDER_ASC),
                              sortField);
         return queryWrapper;

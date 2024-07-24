@@ -5,15 +5,13 @@ import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lyw.springbootstarter.annotation.AuthCheck;
-import com.lyw.springbootstarter.common.BaseResponse;
-import com.lyw.springbootstarter.common.DeleteRequest;
-import com.lyw.springbootstarter.common.ResultUtils;
-import com.lyw.springbootstarter.common.UserHolder;
+import com.lyw.springbootstarter.common.*;
 import com.lyw.springbootstarter.constant.UserConstant;
 import com.lyw.springbootstarter.model.dto.question.QuestionAddRequest;
 import com.lyw.springbootstarter.model.dto.question.QuestionGetRequestPage;
 import com.lyw.springbootstarter.model.dto.question.QuestionUpdateRequest;
 import com.lyw.springbootstarter.model.entity.Question;
+import com.lyw.springbootstarter.model.vo.question.QuestionUpdateVO;
 import com.lyw.springbootstarter.model.vo.question.QuestionVO;
 import com.lyw.springbootstarter.service.QuestionService;
 import com.lyw.springbootstarter.service.UserService;
@@ -45,7 +43,7 @@ public class QuestionController {
 
     @PostMapping("/add")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-    public BaseResponse<Long> add(@RequestBody QuestionAddRequest request) {
+    public BaseResponse<Long> addQuestion(@RequestBody QuestionAddRequest request) {
 
         Question question = new Question();
         BeanUtils.copyProperties(request, question);
@@ -68,7 +66,7 @@ public class QuestionController {
 
     @PostMapping("/update")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-    public BaseResponse<String> update(@RequestBody QuestionUpdateRequest request) {
+    public BaseResponse<String> updateQuestion(@RequestBody QuestionUpdateRequest request) {
 
         Question question = new Question();
         BeanUtils.copyProperties(request, question);
@@ -91,14 +89,14 @@ public class QuestionController {
 
     @PostMapping("/delete")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-    public BaseResponse<Void> delete(@RequestBody DeleteRequest request) {
+    public BaseResponse<Void> deleteQuestion(@RequestBody DeleteRequest request) {
         questionService.removeById(request.getId());
         return ResultUtils.success(null);
     }
 
     @PostMapping("/get")
     @AuthCheck(mustRole = UserConstant.DEFAULT_ROLE)
-    public BaseResponse<QuestionVO> get(@RequestBody QuestionGetRequestPage request) {
+    public BaseResponse<QuestionVO> getQuestion(@RequestBody QuestionGetRequestPage request) {
         QueryWrapper<Question> queryWrapper = questionService.getQueryWrapper(request);
         Question question = questionService.getOne(queryWrapper);
         QuestionVO questionVO = questionService.toVO(question);
@@ -107,9 +105,23 @@ public class QuestionController {
         return ResultUtils.success(questionVO);
     }
 
+    @PostMapping("/get/raw")
+    @AuthCheck(mustRole = UserConstant.DEFAULT_ROLE)
+    public BaseResponse getRawQuestion(@RequestBody QuestionGetRequestPage request) {
+        QueryWrapper<Question> queryWrapper = questionService.getQueryWrapper(request);
+        Question question = questionService.getOne(queryWrapper);
+
+        if (UserHolder.getUserRole().equals(UserConstant.DEFAULT_ROLE) && !UserHolder.getUserID().equals(question.getUserid())) {
+            return ResultUtils.error(ErrorCode.NO_AUTH_ERROR, "无权限");
+        }
+        QuestionUpdateVO questionUpdateVO = QuestionUpdateVO.from(question);
+
+        return ResultUtils.success(questionUpdateVO);
+    }
+
     @PostMapping("/list/page")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-    public BaseResponse<Page<Question>> listUserByPage(@RequestBody QuestionGetRequestPage request) {
+    public BaseResponse<Page<Question>> listQuestionByPage(@RequestBody QuestionGetRequestPage request) {
         QueryWrapper<Question> queryWrapper = questionService.getQueryWrapper(request);
         Page<Question> page = questionService.page(new Page<>(request.getCurrent(), request.getPageSize()), queryWrapper);
         return ResultUtils.success(page);
@@ -117,7 +129,7 @@ public class QuestionController {
 
     @PostMapping("/list/page/vo")
     @AuthCheck(mustRole = UserConstant.DEFAULT_ROLE)
-    public BaseResponse<Page<QuestionVO>> listUserByPageVO(@RequestBody QuestionGetRequestPage request) {
+    public BaseResponse<Page<QuestionVO>> listQuestionVOByPageVO(@RequestBody QuestionGetRequestPage request) {
         QueryWrapper<Question> queryWrapper = questionService.getQueryWrapper(request);
         Page<Question> page = questionService.page(new Page<>(request.getCurrent(), request.getPageSize()), queryWrapper);
         Page<QuestionVO> questionVOPage = questionService.convertPageVO(page);
