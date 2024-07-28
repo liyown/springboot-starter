@@ -17,7 +17,18 @@ spring:
     username: ${my.db.username}
     password: ${my.db.password}
     driver-class-name: com.mysql.cj.jdbc.Driver
-  # Redis 配置
+    type: com.alibaba.druid.pool.DruidDataSource
+  cloud:
+    #  sentinel配置 后台监控
+    sentinel:
+      http-method-specify: true
+      #      transport:
+      #        dashboard: localhost:8089
+      log:
+        dir: "logs/sentinel"
+        switch-pid: true
+
+    # Redis 配置
   # todo 需替换配置，然后取消注释
   #  redis:
   #    database: 1
@@ -64,6 +75,8 @@ spring:
     #        max-interval: 10000
     #        multiplier: 2
     #        stateless: true
+
+
 
   # 文件上传
   servlet:
