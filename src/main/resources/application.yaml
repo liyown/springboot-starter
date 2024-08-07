@@ -5,7 +5,7 @@ server:
     session:
       cookie:
         max-age: 2592000
-  port: 8080
+  port: 8888
 
 spring:
   application:
@@ -110,15 +110,20 @@ logging:
     path: "logs/${spring.application.name}"
 
 
+# springdoc-openapi项目配置
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+  api-docs:
+    path: /v3/api-docs
+  group-configs:
+    - group: 'default'
+      paths-to-match: '/**'
+      packages-to-scan: 'com.lyw.springbootstarter.controller'
+# knife4j的增强配置，不需要增强可以不配
 knife4j:
   enable: true
-  openapi:
-    title: 项目初始化接口文档
-    description: "项目初始化接口文档"
-    version: v1.0.0
-    group:
-      default:
-        group-name: default
-        api-rule: package
-        api-rule-resources:
-          - com.lyw.springbootstarter.controller
+  setting:
+    language: zh_cn

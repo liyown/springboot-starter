@@ -75,4 +75,6 @@ public class SentinelConfig {
         SystemRuleManager.register2Property(systemRuleDataSource.getProperty());
     }
 
+
+
 }
